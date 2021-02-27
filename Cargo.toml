@@ -3,6 +3,10 @@ name = "csvquery"
 version = "0.1.0"
 authors = ["VictorBulba <bulba@asclet.com>"]
 edition = "2018"
+repository = "https://github.com/VictorBulba/csvquery"
+description = "Engine for making key-value queries in csv file"
+readme = "README.md"
+keywords = ["csv", "database"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
