@@ -1,5 +1,5 @@
 [package]
-name = "rust45-csvquery"
+name = "csvquery"
 version = "0.1.0"
 authors = ["VictorBulba <bulba@asclet.com>"]
 edition = "2018"
