@@ -1,6 +1,6 @@
 [package]
 name = "csvquery"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["VictorBulba <bulba@asclet.com>"]
 edition = "2018"
 license = "MIT"
@@ -14,4 +14,3 @@ keywords = ["csv", "database"]
 [dependencies]
 csv = "1"
 serde = "1"
-lru = "0.6"

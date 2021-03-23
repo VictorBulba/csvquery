@@ -16,7 +16,6 @@ use std::path::Path;
 use std::hash::Hash;
 use std::borrow::Borrow;
 use serde::de::DeserializeOwned;
-use lru::LruCache;
 use location::Location;
 pub use opts::EngineOptions;
 pub use error::QueryError;
@@ -36,8 +35,8 @@ pub use error::QueryError;
 pub struct Engine<K, V> {
     index: index::Index<K>,
     file: File,
-    cache: LruCache<K, V>,
-    delimiter: u8
+    delimiter: u8,
+    _phantom: std::marker::PhantomData<V>,
 }
 
 
@@ -52,26 +51,8 @@ impl<K: Hash + Eq, V: DeserializeOwned> Engine<K, V> {
     {
         let index = index::make_index(&path, opts, indexing_key_fn)?;
         let file = File::open(path)?;
-        let cache = LruCache::new(opts.cache_cap);
-        Ok(Self { index, file, cache, delimiter: opts.delimiter })
-    }
-
-    /// Returns cached value if it contains it.
-    /// Calls `get_from_file`, puts returned value in cache and return it otherwise.
-    #[inline]
-    pub fn get_cached<'a, Q>(&'a mut self, key: &Q) -> Result<&'a V, QueryError> 
-        where
-            lru::KeyRef<K>: Borrow<Q>,
-            K: Borrow<Q>,
-            Q: Hash + Eq + ToOwned<Owned = K>,
-    {
-        // Just checked that it exists (Borrow checker trick)
-        if self.cache.contains(key) {
-            return Ok(self.cache.get(key).unwrap());
-        }
-        let value = self.get_from_file(key)?;
-        self.cache.put(key.to_owned(), value);
-        self.cache.get(key).ok_or(QueryError::NotPresented)
+        let _phantom = std::marker::PhantomData::default();
+        Ok(Self { index, file, delimiter: opts.delimiter, _phantom})
     }
 
     /// Reads value from file avoiding checking cache
