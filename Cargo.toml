@@ -1,6 +1,6 @@
 [package]
 name = "csvquery"
-version = "0.2.0"
+version = "0.3"
 authors = ["VictorBulba <bulba@asclet.com>"]
 edition = "2018"
 license = "MIT"
