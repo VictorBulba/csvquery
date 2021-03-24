@@ -13,12 +13,12 @@ pub(crate) fn make_index<P, K, V, F>(path: P, opts: EngineOptions, indexing_key_
         P: AsRef<Path>,
         K: Hash + Eq,
         V: DeserializeOwned,
-        F: Fn(V) -> Option<K>,
+        F: FnMut(V) -> Option<K>,
 {
     let reader = make_csv_reader(&path, opts)?;
     let index = reader.into_records()
         .flatten()
-        .flat_map(|value| extract_key_location_pair(value, &indexing_key_fn))
+        .scan(indexing_key_fn, |f, value| extract_key_location_pair(value, f))
         .collect();
     Ok(index)
 }
@@ -36,11 +36,11 @@ fn make_csv_reader<P: AsRef<Path>>(path: P, opts: EngineOptions) -> io::Result<C
 }
 
 
-fn extract_key_location_pair<K, V, F>(rec: csv::StringRecord, indexing_key_fn: &F) -> Option<(K, Location)>
+fn extract_key_location_pair<K, V, F>(rec: csv::StringRecord, indexing_key_fn: &mut F) -> Option<(K, Location)>
     where 
         K: Hash + Eq,
         V: DeserializeOwned,
-        F: Fn(V) -> Option<K>,
+        F: FnMut(V) -> Option<K>,
 {
     const DELIMITER_LEN: usize = 1;
     let offset = rec.position()?.byte();

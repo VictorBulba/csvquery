@@ -47,7 +47,7 @@ impl<K: Hash + Eq, V: DeserializeOwned> Engine<K, V> {
     pub fn from_file_with_opts<P, F>(path: P, indexing_key_fn: F, opts: EngineOptions) -> io::Result<Self> 
         where
             P: AsRef<Path>,
-            F: Fn(V) -> Option<K>
+            F: FnMut(V) -> Option<K>
     {
         let index = index::make_index(&path, opts, indexing_key_fn)?;
         let file = File::open(path)?;
